@@ -3,22 +3,22 @@
  * 以下命令添加在 [general] 里
  * geo_location_checker=http://ip-api.com/json/?lang=zh-CN, https://raw.githubusercontent.com/shawnwang5/QuantumultX/main/Scripts/server-info.js
  */
-if ($response.statusCode != 200) {
+if ($response.statusCode === 200) {
+    const resp = JSON.parse($response.body)
+    const country = resp['country']
+    const countryCode = resp['countryCode']
+    const city = resp['city']
+    const isp = resp['isp']
+    const ip = resp['query']
+    const timezone = resp['timezone']
+
+    var title = `${getFlag(countryCode)}${country}-${city}`
+    var subtitle = `${ip}-${isp}-${timezone}`
+
+    $done({ title, subtitle, ip })
+} else {
     $done(null)
 }
-
-const resp = JSON.parse($response.body)
-const country = resp['country']
-const countryCode = resp['countryCode']
-const city = resp['city']
-const isp = resp['isp']
-const ip = resp['query']
-const timezone = resp['timezone']
-
-var title = `${getFlag(countryCode)}${country}-${city}`
-var subtitle = `${ip}-${isp}-${timezone}`
-
-$done({ title, subtitle, ip })
 
 function getFlag(countryCode) {
     const flags = new Map([

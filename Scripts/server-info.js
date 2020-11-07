@@ -1,32 +1,24 @@
 /**
  * 获取节点的详细信息并展示在软件里
  * 以下命令添加在 [general] 里
- * geo_location_checker=http://ip-api.com/json/?lang=zh-CN, server-ip.js
+ * geo_location_checker=http://ip-api.com/json/?lang=zh-CN, https://raw.githubusercontent.com/shawnwang5/QuantumultX/main/Scripts/server-info.js
  */
-if ($response.statusCode !== 200) {
-    return $done(null)
+if ($response.statusCode != 200) {
+    $done(null)
 }
 
-const body = $response.body
+const resp = JSON.parse($response.body)
+const country = resp['country']
+const countryCode = resp['countryCode']
+const city = resp['city']
+const isp = resp['isp']
+const ip = resp['query']
+const timezone = resp['timezone']
 
-const obj = JSON.parse(body)
+var title = `${getFlag(countryCode)}${country}-${city}`
+var subtitle = `${ip}-${isp}-${timezone}`
 
-const country = obj['country']
-const countryCode = obj['countryCode']
-const city = obj['city']
-const isp = obj['isp']
-const ip = obj['query']
-const timezone = obj['timezone']
-
-const title = `${getFlag(countryCode)}${country}-${city}`
-const subtitle = `${ip}-${isp}-${timezone}`
-
-// 必须要把 ip 传过去
-$done({
-    title,
-    subtitle,
-    ip,
-})
+$done({ title, subtitle, ip })
 
 function getFlag(countryCode) {
     const flags = new Map([

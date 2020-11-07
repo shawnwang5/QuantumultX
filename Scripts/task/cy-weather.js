@@ -105,24 +105,22 @@ function realtimeWeather() {
     let hourlyInfoArray = []
     for (let i = 0; i < 4; i++) {
         const skycon = hourly.skycon[i]
-        const dt = new Date(skycon.datetime)
-        const now = dt.getHours() + 1
-        dt.setHours(dt.getHours() + 1)
-        const curSimpleWeatherInfo = getSimpleWeathInfo(skycon.value)[0]
+        const date = new Date(skycon.datetime)
+        const nowHour = (date.getHours() + 1).toString().padStart(2, '0')
+        const nextHour = (date.getHours() + 2).toString().padStart(2, '0')
+        const curSimpleWeatherInfo = getSimpleWeathInfo(skycon.value)
+        const newItem = `${nowHour}点-${nextHour}点,${curSimpleWeatherInfo}`
         if (i % 2 === 0) {
-            hourlyInfoArray.push(
-                `${now}-${dt.getHours() + 1}时,${curSimpleWeatherInfo}`
-            )
+            hourlyInfoArray.push(newItem)
         } else {
             let lastItem = hourlyInfoArray.pop()
-            lastItem +=
-                ';' + `${now}-${dt.getHours() + 1}时,${curSimpleWeatherInfo}`
+            lastItem += '; ' + newItem
             hourlyInfoArray.push(lastItem)
         }
     }
 
     const hourlyInfo = hourlyInfoArray.join('\n')
-    const simpleWeatherInfo = getSimpleWeathInfo(realtime.skycon)[0]
+    const simpleWeatherInfo = getSimpleWeathInfo(realtime.skycon)
     const airQuality = realtime.air_quality.description.chn
     const windInfo = getWindInfo(realtime.wind.speed, realtime.wind.direction)
     const apparentTemperature = realtime.apparent_temperature
@@ -131,49 +129,19 @@ function realtimeWeather() {
     const wetPercent = (realtime.humidity * 100).toFixed(0) + '%'
 
     const title = `${locationInfo.country} ${locationInfo.regionName} ${locationInfo.city}`
-    const subtitle = `${simpleWeatherInfo},${realtime.temperature}℃,空气质量:${airQuality}`
-    const content = `体感${comfortDesc}${apparentTemperature}℃,湿度${wetPercent}
-紫外线${sunLevel},${windInfo}
+    const subtitle = `${simpleWeatherInfo},${realtime.temperature}℃,空气质量: ${airQuality}`
+    const content = `体感${comfortDesc},${apparentTemperature}℃,湿度${wetPercent}
+${sunLevel}紫外线,${windInfo}
 ${hourlyInfo}`
     const extraOpts = {
-        'media-url': 'weather-big.png',
+        'open-url': 'https://tianqi.qq.com/',
+        'media-url':
+            'https://raw.githubusercontent.com/shawnwang5/QuantumultX/main/Images/weather-big.png',
     }
     $.notify(title, subtitle, content, extraOpts)
 }
 
 /************************** 天气对照表 *********************************/
-
-function mapAlertCode(code) {
-    const names = {
-        '01': '🌪 台风',
-        '02': '⛈ 暴雨',
-        '03': '❄️ 暴雪',
-        '04': '❄ 寒潮',
-        '05': '💨 大风',
-        '06': '💨 沙尘暴',
-        '07': '☄️ 高温',
-        '08': '☄️ 干旱',
-        '09': '⚡️ 雷电',
-        10: '💥 冰雹',
-        11: '❄️ 霜冻',
-        12: '💨 大雾',
-        13: '💨 霾',
-        14: '❄️ 道路结冰',
-        15: '🔥 森林火灾',
-        16: '⛈ 雷雨大风',
-    }
-
-    const intensity = {
-        '01': '蓝色',
-        '02': '黄色',
-        '03': '橙色',
-        '04': '红色',
-    }
-
-    const res = code.match(/(\d{2})(\d{2})/)
-    return `${names[res[1]]}${intensity[res[2]]}`
-}
-
 function getWindInfo(speed, direction) {
     let description = ''
     let d_description = ''
@@ -255,74 +223,26 @@ function getWindInfo(speed, direction) {
 
 function getSimpleWeathInfo(skycon) {
     const map = {
-        CLEAR_DAY: [
-            '☀️ 日间晴朗',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/CLEAR_DAY.gif',
-        ],
-        CLEAR_NIGHT: [
-            '✨ 夜间晴朗',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/CLEAR_NIGHT.gif',
-        ],
-        PARTLY_CLOUDY_DAY: [
-            '⛅️ 日间多云',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/PARTLY_CLOUDY_DAY.gif',
-        ],
-        PARTLY_CLOUDY_NIGHT: [
-            '☁️ 夜间多云',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/PARTLY_CLOUDY_NIGHT.gif',
-        ],
-        CLOUDY: [
-            '☁️ 阴',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/CLOUDY.gif',
-        ],
-        LIGHT_HAZE: [
-            '😤 轻度雾霾',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/HAZE.gif',
-        ],
-        MODERATE_HAZE: [
-            '😤 中度雾霾',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/HAZE.gif',
-        ],
-        HEAVY_HAZE: [
-            '😤 重度雾霾',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/HAZE.gif',
-        ],
-        LIGHT_RAIN: [
-            '💧 小雨',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/LIGHT.gif',
-        ],
-        MODERATE_RAIN: [
-            '💦 中雨',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/MODERATE_RAIN.gif',
-        ],
-        HEAVY_RAIN: [
-            '🌧 大雨',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/STORM_RAIN.gif',
-        ],
-        STORM_RAIN: [
-            '⛈ 暴雨',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/STORM_RAIN.gif',
-        ],
-        LIGHT_SNOW: [
-            '🌨 小雪',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/LIGHT_SNOW.gif',
-        ],
-        MODERATE_SNOW: [
-            '❄️ 中雪',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/MODERATE_SNOW.gif',
-        ],
-        HEAVY_SNOW: [
-            '☃️ 大雪',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/HEAVY_SNOW.gif',
-        ],
-        STORM_SNOW: [
-            '⛄️暴雪',
-            'https://raw.githubusercontent.com/58xinian/icon/master/Weather/HEAVY_SNOW',
-        ],
-        FOG: ['🌫️ 雾'],
-        DUST: ['💨 浮尘'],
-        SAND: ['💨 沙尘'],
-        WIND: ['🌪 大风'],
+        CLEAR_DAY: '日间晴朗',
+        CLEAR_NIGHT: '夜间晴朗',
+        PARTLY_CLOUDY_DAY: '日间多云',
+        PARTLY_CLOUDY_NIGHT: '夜间多云',
+        CLOUDY: '阴',
+        LIGHT_HAZE: '轻度雾霾',
+        MODERATE_HAZE: '中度雾霾',
+        HEAVY_HAZE: '重度雾霾',
+        LIGHT_RAIN: '小雨',
+        MODERATE_RAIN: '中雨',
+        HEAVY_RAIN: '大雨',
+        STORM_RAIN: '暴雨',
+        LIGHT_SNOW: '小雪',
+        MODERATE_SNOW: '中雪',
+        HEAVY_SNOW: '大雪',
+        STORM_SNOW: '暴雪',
+        FOG: '雾',
+        DUST: '浮尘',
+        SAND: '沙尘',
+        WIND: '大风',
     }
     return map[skycon]
 }

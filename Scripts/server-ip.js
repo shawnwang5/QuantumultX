@@ -1,5 +1,5 @@
 /**
- * 用户获取节点的详细信息并展示在软件里
+ * 获取节点的详细信息并展示在软件里
  * 以下命令添加在 [general] 里
  * geo_location_checker=http://ip-api.com/json/?lang=zh-CN, server-ip.js
  */

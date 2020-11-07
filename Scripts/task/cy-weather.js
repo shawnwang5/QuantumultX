@@ -2,7 +2,7 @@
  * 彩云天气查询
  * 8:00～22:00 之间，每三小时查询一次天气
  * 以下命令放在 [task_local] 里
- * 0 8-22/3 * * * task/cy-weather.js, tag=彩云天气, img-url=weather.png, enabled=true
+ * 0 8-22/3 * * * task/cy-weather.js, tag=彩云天气, img-url=https://raw.githubusercontent.com/Orz-3/task/master/caiyun.png, enabled=true
  */
 const $ = API('caiyun_weather', true)
 const tokenKey = 'caiyun_weather_token'

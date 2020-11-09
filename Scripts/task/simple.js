@@ -18,7 +18,9 @@ const myRequest = {
 
 $task.fetch(myRequest).then(
     response => {
-        console.log(response.statusCode, response.headers, response.body)
+        console.log(response.statusCode)
+        console.log(response.headers)
+        console.log(response.body)
         $notify('Title', 'Subtitle', response.body)
     },
     reason => {

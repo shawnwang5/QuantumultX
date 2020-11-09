@@ -1,30 +1,27 @@
 /**
- * @fileoverview Example to compose HTTP reqeuest
- * and handle the response. Same task shares context.
- *
- * @supported Quantumult X (v1.0.5-build166)
+ * $prefs.setValueForKey(value, key)
+ * $prefs.valueForKey(key)
+ * $prefs.removeValueForKey
+ * $notify(title, subtitle, content, {'open-url': '', 'media-url': ''})
  */
+const url = 'https://example.com/'
+const method = 'POST'
+const headers = { Field: 'test-header-param' }
+const data = { info: 'abc' }
 
-var url = 'https://example.com/'
-var method = 'POST'
-var headers = { Field: 'test-header-param' }
-var data = { info: 'abc' }
-
-var myRequest = {
-    url: url,
-    method: method, // Optional, default GET.
-    headers: headers, // Optional.
-    body: JSON.stringify(data), // Optional.
+const myRequest = {
+    url,
+    method,
+    headers,
+    body: JSON.stringify(data),
 }
 
 $task.fetch(myRequest).then(
     response => {
-        // response.statusCode, response.headers, response.body
-        console.log(response.body)
-        $notify('Title', 'Subtitle', response.body) // Success!
+        console.log(response.statusCode, response.headers, response.body)
+        $notify('Title', 'Subtitle', response.body)
     },
     reason => {
-        // reason.error
-        $notify('Title', 'Subtitle', reason.error) // Error!
+        console.log(reason.error)
     }
 )
